@@ -185,7 +185,7 @@ for run_idx in range(NUM_RUNS):
         if early_stopper.step_check(perf_val, {'gnn': gnn, 'link_pred': link_pred}):
             break
 
-    early_stopper.load_checkpoint(model)
+    early_stopper.load_checkpoint({'gnn': gnn, 'link_pred': link_pred})
     dataset.load_test_ns()
     perf_test = test(test_loader, neg_sampler, split_mode="test")
     print(f"\tTest {metric}: {perf_test: .4f}")
