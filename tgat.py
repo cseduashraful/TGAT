@@ -25,6 +25,9 @@ from modules.tgat_emb import TGATEncoder
 def train():
     model['gnn'].train()
     model['link_pred'].train()
+    neighbor_loader.reset_state()  # Start with an empty graph.
+
+    total_loss = 0
 
     total_loss = 0
     for batch in train_loader:
@@ -48,6 +51,7 @@ def train():
 
         loss.backward()
         optimizer.step()
+        neighbor_loader.insert(src, pos_dst)
 
         total_loss += float(loss) * batch.num_events
 
@@ -83,6 +87,7 @@ def test(loader, neg_sampler, split_mode):
                 "eval_metric": [metric],
             }
             perf_list.append(evaluator.eval(input_dict)[metric])
+        neighbor_loader.insert(pos_src, pos_dst)
 
     return float(torch.tensor(perf_list).mean())
 
